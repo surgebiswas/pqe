@@ -11,3 +11,7 @@ Code and analysis to answer my preliminary qualifying exam, chaired by Peter Kar
 2. Began analyzing Kee et al. data. 
 - Downloaded the relevant count files and metadata from GEO (Accession: GSE87069). 
 - Performed quality/expression filtering and DEG analysis to obtain a working gene-set for downstream analysis and modeling. See src/pdf/quality_filtering.pdf. 
+
+### April 22, 2017
+3. Read the following papers:
+- Scaling single-cell genomics from phenomenology to mechanism. Tanay et al. -> Single cell review paper from Regev lab.
