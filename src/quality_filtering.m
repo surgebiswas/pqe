@@ -113,7 +113,7 @@ for i = 1 : length(pvals)
     end
 end
 
-tokeep = pvals < 0.01;
+tokeep = pvals < 1/size(d,1);
 
 
 y(~tokeep,:) = [];
