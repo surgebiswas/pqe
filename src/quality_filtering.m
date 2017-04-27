@@ -17,14 +17,31 @@ GFPexp = yexp(1,:);
 % Read in sample metadata. This mainly contains embryonic stage
 % information.
 md = dataset('file', 'GSE87069_series_matrix.txt', 'ReadObsNames', false, 'ReadVarNames', true);
+srt = dataset('file','SraRunTable.txt', 'ReadObsNames', true, 'ReadVarNames', true);
+gsm2depth = containers.Map;
+for i = 1 : size(srt,1)
+    gsm2depth(srt.Sample_Name_s{i}) = srt.MBases_l(i)/srt.AvgSpotLen_l(i);
+end
+
 mdc = dataset2cell(md)';
 md_samples = mdc(2:end,1); 
 E_stage = strrep(mdc(2:end,7), 'developmental stage: ', '');
+
+mdc(1,:) = [];
+adepth = zeros(size(E_stage));
+for i = 1 : size(mdc,1)
+    adepth(i) = gsm2depth(mdc{i,2});
+end
+
 
 % Order the metadata so it's congruent with the expression data.
 [~,~,ib] = intersect(samples, md_samples, 'stable');
 md_samples = md_samples(ib);
 E_stage = E_stage(ib);
+adepth = adepth(ib);
+
+% Add approximate sequencing depth to the list of metadata fields.
+
 
 % The relevant variables going forward are:
 % y -> log2(RPKM + 0.001)
@@ -125,8 +142,8 @@ pvals(~tokeep,:) = [];
 % Export the filtered dataset. 
 % Do not include the EGFP transgene from the expression matrix as this will
 % introduce artificial signal into the dataset during downstream modeling. 
-design = cell2dataset([num2cell(GFP'), E_stage], 'ObsNames', ...
-    samples, 'VarNames', {'EGFP', 'EStage'});
+design = cell2dataset([num2cell(GFP'), E_stage, num2cell(round(adepth*1e6))], 'ObsNames', ...
+    samples, 'VarNames', {'EGFP', 'EStage', 'ApproxDepth'});
 
 dout = mat2dataset(y(2:end,:), 'VarNames', samples, 'ObsNames', genes(2:end));
 

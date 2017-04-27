@@ -10,8 +10,14 @@ for c = 1 : length(colorby)
             scatter(s(:,i), s(:,j), 7, colorby{c}, 'filled');
             axis tight
             buffer_axis;
-            xlabel(sprintf('PC%0.0f (%0.2f%%)', i, pexp(i)));
-            ylabel(sprintf('PC%0.0f (%0.2f%%)', j, pexp(j)));
+            if ~isempty(pexp)
+                xlabel(sprintf('PC%0.0f (%0.2f%%)', i, pexp(i)));
+                ylabel(sprintf('PC%0.0f (%0.2f%%)', j, pexp(j)));
+            else
+                % Assume we're working with Diffusion components
+                xlabel(sprintf('DC%0.0f', i));
+                ylabel(sprintf('DC%0.0f', j));
+            end
             set(gca, 'XTick', []);
             set(gca, 'YTick', []);
             colormap(gca, cmaps{c});
